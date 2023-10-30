@@ -62,6 +62,33 @@ export const verifyEmailApi = async (token) => {
 };
 
 
+//this API is going to hit http://localhost:8080/user/get endpoint to get the user details
+//we access this endpoint using a token which we get from cookies
+//getSession() method which is present in the application context helps us get the token from cookies
+export const sessionApi = async (token) => {
+    let response = frameResponse();
+
+    try {
+        //hit the endpoint http://localhost:8080/user/get backend
+        const url = `${API_BASE_URL}/user/get`;
+        const apiResponse = await axios.get(url, {
+            headers: { Authorization: frameToken(token) },
+        });
+        //if the response is successful , it returns a status code 200 OK
+        if (apiResponse.status === 200) {
+            response = frameResponse(1, apiResponse.data);
+        }
+    } catch (err) {
+        if (err.response) {
+            response = frameResponse(0, err.response.data.message);
+        }
+        console.log(err);
+    } finally {
+        return response;
+    }
+};
+
+
 export const loginApi = async (username, password) => {
     let response = frameResponse();
 
@@ -139,4 +166,46 @@ export const resetPasswordApi = async (token, password) => {
     }
 
 
+};
+
+//http://localhost:8080/user/update/profile API from the backend 
+export const updatePublicProfileApi = async (
+    token,
+    bio,
+    city,
+    country,
+    headline,
+    picture
+) => {
+    let response = frameResponse();
+    try {
+        //http://localhost:8080/user/update/profile  called from the backend
+        const url = `${API_BASE_URL}/user/update/profile`;
+        //request body=> bio, city,country,headline and picture
+        //Token to the header and it is pre-fixed with `Bearer Token`
+        const apiResponse = await axios.post(
+            url,
+            {
+                bio,
+                city,
+                country,
+                headline,
+                picture,
+            },
+            { headers: { Authorization: frameToken(token) } }
+        );
+
+        //if the response is 200 Ok , frameResponse(1, apiResponse.data)
+        if (apiResponse.status === 200) {
+            response = frameResponse(1, apiResponse.data);
+        }
+    } catch (err) {
+        //if the response is not 200 Ok, we display the error message to the response 
+        if (err.response) {
+            response = frameResponse(0, err.response.data.message);
+        }
+        console.log(err);
+    } finally {
+        return response;
+    }
 };

@@ -14,3 +14,9 @@ body,
 .splash-container {
   background-image: url(./assets/images/splash-background.jpg);
 }
+
+.cropper {
+  width: 50vw;
+  height: 50vh;
+  background: #ddd;
+}
